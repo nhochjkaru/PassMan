@@ -185,7 +185,10 @@ namespace PasswordManager
                 services.AddTransient<CryptoService>();
                 services.AddSingleton<CloudServiceProvider>();
                 services.AddSingleton<RestApiTokenHolder>();
+
+                //Key detect
                 
+                services.AddSingleton<UserActivityHook>();
                 // Windows
                 services.AddScoped<LoginWindow>();
                 services.AddScoped<LoginWindowViewModel>();

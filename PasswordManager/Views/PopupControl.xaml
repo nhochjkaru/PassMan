@@ -20,10 +20,14 @@
     Opened="Popup_Opened"
     Placement="AbsolutePoint"
     PopupAnimation="Fade"
-    StaysOpen="False"
+    StaysOpen="True"
     mc:Ignorable="d">
     <Popup.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/PasswordManager;component/Themes/SeparatorTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <DataTemplate x:Key="CredentialPopupDataTemplate" DataType="{x:Type vm:CredentialViewModel}">
                 <TextBlock Text="{Binding NameFieldVM.Value}" />
             </DataTemplate>
@@ -77,6 +81,20 @@
                 x:Key="CredentialPopupItemStyle"
                 BasedOn="{StaticResource MaterialDesignListBoxItem}"
                 TargetType="{x:Type ListBoxItem}" />
+            
+            <Style
+                x:Key="CredFilledTextBoxStyle"
+                BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}"
+                TargetType="{x:Type TextBox}">
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="IsHitTestVisible" Value="False" />
+                <Setter Property="md:HintAssist.IsFloating" Value="True" />
+                <Setter Property="md:TextFieldAssist.DecorationVisibility" Value="Collapsed" />
+                <Setter Property="md:TextFieldAssist.RippleOnFocusEnabled" Value="False" />
+                <Setter Property="md:TextFieldAssist.TextFieldCornerRadius" Value="4" />
+            </Style>
         </ResourceDictionary>
     </Popup.Resources>
     <Grid>
@@ -84,6 +102,7 @@
         <Border Background="{DynamicResource MaterialDesignPaper}" CornerRadius="8">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -101,9 +120,23 @@
                     Command="{Binding CloseCommand}"
                     Content="{md:PackIcon Kind=Close}"
                     Style="{StaticResource MaterialDesignFlatButton}" />
+                <TextBox
+                        x:Name="SearchTextBox"
+                        Grid.Row="1"
+                        Padding="4"
+                        VerticalAlignment="Center"
+                        md:HintAssist.IsFloating="False"
+                        md:TextFieldAssist.HasClearButton="True"
+                        md:TextFieldAssist.HasLeadingIcon="True"
+                        md:TextFieldAssist.LeadingIcon="Search"
+                        md:TextFieldAssist.LeadingIconSize="16"
+                        Style="{StaticResource CredFilledTextBoxStyle}"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"/>
+
                 <ListBox
                     x:Name="CredListBox"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     HorizontalContentAlignment="Stretch"
                     md:RippleAssist.IsDisabled="True"
                     ItemContainerStyle="{StaticResource CredentialPopupItemStyle}"

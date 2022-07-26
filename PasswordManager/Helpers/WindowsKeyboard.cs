@@ -6,6 +6,7 @@ namespace PasswordManager.Helpers
     internal static class WindowsKeyboard
     {
         public const byte VK_V = 0x56;
+        public const byte VK_A = 0x41;
         public const byte VK_CONTROL = 0x11;
         public const int KEYEVENTF_KEYUP = 0x0002;
 
