@@ -6,14 +6,17 @@ using NLog;
 using NLog.Extensions.Logging;
 using PasswordManager.Authorization.Brokers;
 using PasswordManager.Authorization.Holders;
+using PasswordManager.Authorization.Responses;
 using PasswordManager.Clouds.Services;
 using PasswordManager.Hotkeys;
+using PasswordManager.RestApiHelper;
 using PasswordManager.Services;
 using PasswordManager.Settings;
 using PasswordManager.ViewModels;
 using PasswordManager.Views;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PasswordManager
@@ -23,6 +26,8 @@ namespace PasswordManager
     /// </summary>
     public partial class App : Application
     {
+        public static byte[] credSt { get; set; }
+        public static string apitoken { get; set; }
         private readonly Mutex _mutex;
         private static IConfiguration _configuration;
 
@@ -83,12 +88,54 @@ namespace PasswordManager
 
                 // Create tray icon
                 _trayIcon = new TrayIcon();
+                bool validtoken = false;
+                using (var checkTokenScope = Host.Services.CreateScope())
+                {
+                    try
+                    {
+                        var _tokenHolder = Host.Services.GetService<RestApiTokenHolder>();
+                        var _callApi = Host.Services.GetService<CallApi>();
+                        ApiTokenResponse token = _tokenHolder.accesstoken;
+                        if (token != null)
+                        {
+                            App.apitoken = token.AccessToken;
+                            try
+                            {
+                                var task = Task.Run(async () => await _callApi.Get("api/v1.1/Authentication"));
+                                var a = task.Result;
+                                if (_callApi.IsSuccessStatusCode)
+                                {
+                                    validtoken = true;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
 
-                // Login
+                            }
+                        }
+                    }catch (Exception ex) { validtoken = false; }
+                }// Login
                 using (var loginScope = Host.Services.CreateScope())
                 {
+                    if (!validtoken)
+                    {
+                        var userloginWindow = Host.Services.GetService<UserLoginWindow>();
+                        
+                        bool? userdialogResult = userloginWindow.ShowDialog(); // Stop here
+
+                        if (userdialogResult != true)
+                        {
+                            Shutdown();
+                            return;
+                        }
+                        userloginWindow.Close();
+                    }
+                    else
+                    {
+                        welcomeWindow.Close();
+                    }
                     var loginWindow = Host.Services.GetService<LoginWindow>();
-                    welcomeWindow.Close();
+                    
                     bool? dialogResult = loginWindow.ShowDialog(); // Stop here
 
                     if (dialogResult != true)
@@ -125,15 +172,23 @@ namespace PasswordManager
                 // Clouds
                 // Google
                 services.Configure<GoogleDriveConfig>(_configuration.GetSection("Settings:GoogleDriveConfig"));
+                services.Configure<ApiConfig>(_configuration.GetSection("Settings:ApiConfig"));
+                services.AddTransient<CallApi>();
+                
                 services.AddTransient<GoogleAuthorizationBroker>();
                 services.AddTransient<GoogleDriveTokenHolder>();
                 services.AddTransient<GoogleDriveCloudService>();
+                services.AddTransient<RestApiCloudService>();
                 services.AddTransient<CryptoService>();
                 services.AddSingleton<CloudServiceProvider>();
-
+                services.AddSingleton<RestApiTokenHolder>();
+                
                 // Windows
                 services.AddScoped<LoginWindow>();
                 services.AddScoped<LoginWindowViewModel>();
+
+                services.AddScoped<UserLoginWindow>();
+                services.AddScoped<UserLoginWindowViewModel>();
 
                 services.AddScoped<MainWindow>();
                 services.AddScoped<MainWindowViewModel>();

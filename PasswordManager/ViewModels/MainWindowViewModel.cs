@@ -32,6 +32,7 @@ namespace PasswordManager.ViewModels
         public PasswordsViewModel PasswordsVM { get; }
         public SettingsViewModel SettingsVM { get; }
         public CloudSyncViewModel CloudSyncVM { get; }
+        public TPCloudSyncViewModel TPCloudSyncVM { get; }
         public ObservableCollectionDelayed<NavigationItemViewModel> NavigationItems { get; }
 
         public NavigationItemViewModel SelectedNavigationItem
@@ -67,10 +68,16 @@ namespace PasswordManager.ViewModels
                     PasswordManager.Language.Properties.Resources.Passwords,
                     PackIconKind.Password,
                     () => new PasswordsControl() { DataContext = PasswordsVM }),
+                //new NavigationItemViewModel(
+                //    PasswordManager.Language.Properties.Resources.CloudSync,
+                //    PackIconKind.Cloud,
+                //    () => new CloudSyncControl() { DataContext = CloudSyncVM }),
+
                 new NavigationItemViewModel(
-                    PasswordManager.Language.Properties.Resources.CloudSync,
+                    PasswordManager.Language.Properties.Resources.Sync,
                     PackIconKind.Cloud,
-                    () => new CloudSyncControl() { DataContext = CloudSyncVM }),
+                    () => new TPCloudSyncControl() { DataContext = TPCloudSyncVM }),
+
                 new NavigationItemViewModel(
                     PasswordManager.Language.Properties.Resources.Settings,
                     PackIconKind.Settings,

@@ -63,8 +63,8 @@ namespace PasswordManager.Services
                 List<Credential> cloudCredentials = null;
                 var password = _credentialsCryptoService.GetPassword();
 
-                do
-                {
+                //do
+                //{
                     try
                     {
                         SyncStateChanged?.Invoke(PasswordManager.Language.Properties.Resources.Decrypting);
@@ -81,8 +81,8 @@ namespace PasswordManager.Services
                         if (password is null)
                             throw new Exception("Merge operation cancelled by user"); // Cancel operation
                     }
-                }
-                while (cloudCredentials is null);
+                //}
+                //while (cloudCredentials is null);
 
                 // Merge
                 mergeResult = await _credentialsCryptoService.Merge(cloudCredentials);

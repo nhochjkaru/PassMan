@@ -8,6 +8,7 @@ namespace PasswordManager.Helpers
         public const string AppName = "Purple";
         public const string PasswordsFileName = "purple.dat";
         public const string CommonSettingsFileName = "commonSettings.json";
+        public const string ApiFileName = "api.json";
         public const string GoogleDriveFileName = "googleDrive.json";
 
         public static string LocalAppDataDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
@@ -15,7 +16,7 @@ namespace PasswordManager.Helpers
         public static string PasswordsFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, PasswordsFileName);
         public static string CommonSettingsFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, CommonSettingsFileName);
         public static string GoogleDriveFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, GoogleDriveFileName);
-
+        public static string ApiFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, ApiFileName);
         static Constants()
         {
             //CreateIfNotExists(RoamingAppDataDirectoryPath);

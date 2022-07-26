@@ -4,6 +4,9 @@
       "ClientId": "214475560778-rctoriolm9j7md36h06tqno28689vgnv.apps.googleusercontent.com",
       "ClientSecret": "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",
       "Scopes": "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile"
+    },
+    "ApiConfig": {
+      "baseUrl": "http://localhost:5216"
     }
   },
   "NLog": {

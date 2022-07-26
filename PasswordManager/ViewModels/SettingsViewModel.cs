@@ -30,6 +30,7 @@ namespace PasswordManager.ViewModels
         private readonly CredentialsCryptoService _credentialsCryptoService;
         private readonly ILogger<SettingsViewModel> _logger;
         private readonly HotkeysService _hotkeysService;
+        private readonly SyncService _syncService;
         private string _newPassword;
         private string _newPasswordHelperText;
         private AsyncRelayCommand _changePasswordCommand;
@@ -87,7 +88,8 @@ namespace PasswordManager.ViewModels
             AppSettingsService appSettingsService,
             CredentialsCryptoService credentialsCryptoService,
             ILogger<SettingsViewModel> logger,
-            HotkeysService hotkeysService)
+            HotkeysService hotkeysService,
+            SyncService syncService)
         {
             _themeService = themeService;
             _appSettingsService = appSettingsService;
@@ -97,6 +99,7 @@ namespace PasswordManager.ViewModels
 
             _themeMode = _appSettingsService.ThemeMode;
             _showPopupHotkey = _appSettingsService.ShowPopupHotkey;
+            _syncService = syncService;
         }
 
         private async Task ChangePasswordAsync()
@@ -115,7 +118,7 @@ namespace PasswordManager.ViewModels
             {
                 _credentialsCryptoService.SetPassword(NewPassword);
                 await _credentialsCryptoService.SaveCredentials();
-
+                await _syncService.Upload(Cloud.Enums.CloudType.TPCloud);
                 NewPasswordIsSet?.Invoke();
                 success = true;
             }

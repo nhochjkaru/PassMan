@@ -55,7 +55,7 @@ namespace PasswordManager.Application.Features.Authentication.Login
                         {
                             la.status = "2";
                         }
-                        var resB = loginRepo.AddAsync(la);
+                        var resB = loginRepo.AddNoSaveAsync(la);
                         unitOfWork.SaveChanges();
                         transaction.Commit();
 
@@ -63,10 +63,11 @@ namespace PasswordManager.Application.Features.Authentication.Login
                     case LCmd.Register:
                         if (resA.Count() > 0)
                         {
-                            //user đã tồn tại
+                            res.resCode = "001";
                         }
                         else
                         {
+                            
                             User u = new User();
                             u.Username= request.req.userName;
                             u.LastName = request.req.LastName;
@@ -75,13 +76,14 @@ namespace PasswordManager.Application.Features.Authentication.Login
                             await userRepo.AddAsync(u);
                             unitOfWork.SaveChanges();
                             transaction.Commit();
+                            res = _userService.Authenticate(resA.FirstOrDefault());
+                            res.resCode = "000";
                         }
                         break;
                     default:
                         break;
                 }
             }
-            await Task.Delay(500);//
             return res;
         }
     }

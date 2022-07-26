@@ -61,7 +61,6 @@ namespace PasswordManager.Application.Interface.Login
         private string generateJwtToken(User user)
         {
             // generate token that is valid for 7 days
-            user.Password = "masked";
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor

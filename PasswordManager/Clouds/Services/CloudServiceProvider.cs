@@ -18,6 +18,7 @@ namespace PasswordManager.Clouds.Services
             return cloudType switch
             {
                 CloudType.GoogleDrive => _serviceProvider.GetService(typeof(GoogleDriveCloudService)) as ICloudService,
+                CloudType.TPCloud=>_serviceProvider.GetService(typeof(RestApiCloudService)) as ICloudService,
                 _ => null,
             };
         }

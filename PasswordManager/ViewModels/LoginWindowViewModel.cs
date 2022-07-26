@@ -14,7 +14,7 @@ namespace PasswordManager.ViewModels
     public class LoginWindowViewModel : ObservableRecipient
     {
         #region Design time instance
-        private static readonly Lazy<LoginWindowViewModel> _lazy = new Lazy<LoginWindowViewModel>(() => new LoginWindowViewModel(null, null));
+        private static readonly Lazy<LoginWindowViewModel> _lazy = new Lazy<LoginWindowViewModel>(() => new LoginWindowViewModel(null,null, null));
         public static LoginWindowViewModel DesignTimeInstance => _lazy.Value;
         #endregion
 
@@ -22,6 +22,7 @@ namespace PasswordManager.ViewModels
 
         private readonly CredentialsCryptoService _credentialsCryptoService;
         private readonly ILogger<LoginWindowViewModel> _logger;
+        private readonly SyncService _syncService;
         private CancellationTokenSource _cancellationTokenSource;
         private bool _credentialsFileExist;
 
@@ -61,12 +62,17 @@ namespace PasswordManager.ViewModels
 
         public LoginWindowViewModel(
             CredentialsCryptoService credentialsCryptoService,
-            ILogger<LoginWindowViewModel> logger)
+            ILogger<LoginWindowViewModel> logger,
+            SyncService syncService)
         {
             _credentialsCryptoService = credentialsCryptoService;
             _logger = logger;
+            _syncService = syncService;
         }
-
+        private async Task<string> SyncPasswordRequired()
+        {
+            return Password;
+        }
         public async Task LoadCredentialsAsync()
         {
             if (string.IsNullOrWhiteSpace(Password) || Password.Length < 8)
@@ -85,7 +91,9 @@ namespace PasswordManager.ViewModels
                 if (!_credentialsFileExist)
                 {
                     _credentialsCryptoService.SetPassword(Password);
+                    await _syncService.Synchronize(Cloud.Enums.CloudType.TPCloud, SyncPasswordRequired);
                     Accept?.Invoke();
+                    
                 }
                 else
                 {
@@ -102,7 +110,9 @@ namespace PasswordManager.ViewModels
                     }
                     else
                     {
+                        await _syncService.Synchronize(Cloud.Enums.CloudType.TPCloud, SyncPasswordRequired);
                         Accept?.Invoke();
+                        
                     }
                 }
             }
