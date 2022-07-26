@@ -133,7 +133,7 @@
     <value>Password is incorrect</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Local Passcode</value>
   </data>
   <data name="CAPSLOCKEnabled" xml:space="preserve">
     <value>CAPS LOCK enabled</value>
@@ -323,5 +323,11 @@
   </data>
   <data name="UserName" xml:space="preserve">
     <value>User Name</value>
+  </data>
+  <data name="UChangePassword" xml:space="preserve">
+    <value>Change User Password</value>
+  </data>
+  <data name="UNewPassword" xml:space="preserve">
+    <value>New User Password</value>
   </data>
 </root>

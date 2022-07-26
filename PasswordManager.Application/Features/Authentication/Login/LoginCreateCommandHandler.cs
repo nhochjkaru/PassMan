@@ -80,6 +80,21 @@ namespace PasswordManager.Application.Features.Authentication.Login
                             res.resCode = "000";
                         }
                         break;
+                    case LCmd.ChangePassword:
+                        if (resA.Count() > 0)
+                        {
+                            var user = resA.FirstOrDefault();
+                            user.Password = request.req.password;
+                            await userRepo.UpdateNoSaveAsync(user);
+                            unitOfWork.SaveChanges();
+                            transaction.Commit();
+                            res.resCode = "000";
+                        }else
+                        {
+                            res.resCode = "001";
+                        }    
+                        
+                        break;
                     default:
                         break;
                 }

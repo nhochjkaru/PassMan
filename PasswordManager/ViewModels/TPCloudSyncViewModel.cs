@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using PasswordManager.Authorization.Holders;
 using PasswordManager.Cloud.Enums;
 using PasswordManager.Clouds.Services;
 using PasswordManager.Helpers;
@@ -14,6 +15,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Diagnostics;
+using System.Windows;
 
 namespace PasswordManager.ViewModels
 {
@@ -33,6 +36,7 @@ namespace PasswordManager.ViewModels
         private readonly AppSettingsService _appSettingsService;
         private readonly CloudServiceProvider _cloudServiceProvider;
         private readonly ILogger<CloudSyncViewModel> _logger;
+        private readonly RestApiTokenHolder _restApiTokenHolder;
         private readonly ImageService _imageService;
         private readonly SyncService _syncService;
 
@@ -108,6 +112,7 @@ namespace PasswordManager.ViewModels
             CloudServiceProvider cloudServiceProvider,
             ImageService imageService,
             SyncService syncService,
+            RestApiTokenHolder restApiTokenHolder,
             ILogger<CloudSyncViewModel> logger)
         {
             _appSettingsService = appSettingsService;
@@ -115,7 +120,7 @@ namespace PasswordManager.ViewModels
             _imageService = imageService;
             _syncService = syncService;
             _logger = logger;
-
+            _restApiTokenHolder = restApiTokenHolder;
             _syncService.SyncStateChanged += SyncService_SyncStateChanged;
         }
 
@@ -133,9 +138,11 @@ namespace PasswordManager.ViewModels
                 case CloudType.GoogleDrive:
                     authorizing = !GoogleDriveEnabled;
                     break;
+                case CloudType.TPCloud:
+                    authorizing = false;
+                    break;
             }
             var cloudService = _cloudServiceProvider.GetCloudService(cloudType);
-
             try
             {
                 if (authorizing)
@@ -159,10 +166,10 @@ namespace PasswordManager.ViewModels
                     var token = processingControl.ViewModel.CancellationToken;
                     _ = DialogHost.Show(processingControl, windowDialogName); // Don't await dialog host
 
-                    await cloudService.AuthorizationBroker.RevokeToken(token);
+                    //await cloudService.AuthorizationBroker.RevokeToken(token);
 
-                    GoogleDriveEnabled = false;
-                    await _appSettingsService.Save();
+                    //GoogleDriveEnabled = false;
+                    //await _appSettingsService.Save();
 
                     ClearUserInfo(cloudType);
                 }
@@ -239,6 +246,11 @@ namespace PasswordManager.ViewModels
                 case CloudType.GoogleDrive:
                     GoogleProfileImage = null;
                     GoogleUserName = null;
+                    break;
+                case CloudType.TPCloud:
+                    _restApiTokenHolder.RemoveToken();
+                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                    Application.Current.Shutdown();
                     break;
             }
         }

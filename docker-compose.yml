@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  passwordmanager.api:
+    image: ${DOCKER_REGISTRY-}passwordmanagerapi
+    build:
+      context: .
+      dockerfile: PasswordManager.Api/Dockerfile

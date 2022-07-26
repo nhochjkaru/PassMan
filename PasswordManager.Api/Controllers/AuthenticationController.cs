@@ -50,6 +50,24 @@ namespace PasswordManager.Api.Controllers
             return Ok(loginRes);
         }
 
+        [Route("changePass")]
+        [Authorize]
+        [HttpPost]
+        [ProducesResponseType(typeof(dtoLoginResponse), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<dtoLoginResponse>> changePass([FromBody] dtoLoginRequest req)
+        {
+            var user = (User)HttpContext.Items["User"];
+            req.command = LCmd.ChangePassword;
+            req.userName = user.Username;
+            var login = new LoginCreateCommand(req);
+            var loginRes = await _mediator.Send(login);
+            if (loginRes.resCode == "000")
+            {
+                loginRes.resDesc = "Success";
+            };
+            return Ok(loginRes);
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
@@ -58,6 +76,14 @@ namespace PasswordManager.Api.Controllers
             var login = new LoginGetAllQuery();
             var users = await _mediator.Send(login);
             return Ok(users);
+        }
+        [Route("ValidToken")]
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> ValidToken()
+        {
+            var user = (User)HttpContext.Items["User"];
+            return Ok(user.Username);
         }
     }
 }

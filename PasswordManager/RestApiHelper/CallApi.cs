@@ -32,7 +32,15 @@ namespace PasswordManager.RestApiHelper
 
             identityAPI = new HttpClient();
             identityAPI.BaseAddress = new Uri(_config.baseUrl);
-            identityAPI.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
+            try
+            {
+                if (token.AccessToken != null)
+                {
+                    identityAPI.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
+                }
+            }catch (Exception ex)
+            { }
+               
         }
 
         public async Task<string> Post<T>(string Url, T obj)

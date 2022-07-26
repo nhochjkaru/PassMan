@@ -82,6 +82,7 @@
                         </StackPanel>
                         <StackPanel Width="120" Visibility="{Binding FetchingUserInfo, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                             <Ellipse
+                                Visibility="Hidden"
                                 Width="64"
                                 Height="64"
                                 HorizontalAlignment="Center">
@@ -151,7 +152,7 @@
                             Command="{Binding LoginCommand}"
                             CommandParameter="{x:Static cloudEnums:CloudType.TPCloud}"
                             Content="{x:Static properties:Resources.SignOut}"
-                            Visibility="Hidden"
+                            Visibility="Visible"
                             Style="{StaticResource MaterialDesignFlatAccentButton}" />
                     </Grid>
                 </Grid>

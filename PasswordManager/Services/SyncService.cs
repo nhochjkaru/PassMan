@@ -125,7 +125,7 @@ namespace PasswordManager.Services
                 var token = _syncCTS.Token;
                 var cloudService = _cloudServiceProvider.GetCloudService(cloudType);
                 SyncStateChanged?.Invoke(PasswordManager.Language.Properties.Resources.Uploading);
-                using var fileStream = File.Open(Constants.PasswordsFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var fileStream = File.Open(Path.Combine( Constants.LocalAppDataDirectoryPath, App.userName, Constants.PasswordsFileName), FileMode.Open, FileAccess.Read, FileShare.Read);
                 // Ensure begining
                 fileStream.Seek(0, SeekOrigin.Begin);
                 await cloudService.Upload(fileStream, Constants.PasswordsFileName, token);

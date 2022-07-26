@@ -32,7 +32,7 @@ namespace PasswordManager.Application.Features.Sync
                 {
                    var usercred= resA.FirstOrDefault();
                     usercred.cred = Base64Url.Decode(request.req.data);
-                    await UserCredRepo.UpdateAsync(usercred);
+                    await UserCredRepo.UpdateNoSaveAsync(usercred);
                     unitOfWork.SaveChanges();
                     transaction.Commit();
                     res.resCode = "000";

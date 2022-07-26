@@ -24,6 +24,14 @@ namespace PasswordManager.Views
             }
         }
 
+        private void UPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.NewUPassword = NewUPasswordBox.Password;
+            }
+        }
+        
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue != null && e.OldValue is SettingsViewModel oldSettingsViewModel)

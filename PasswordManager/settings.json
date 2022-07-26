@@ -6,7 +6,7 @@
       "Scopes": "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile"
     },
     "ApiConfig": {
-      "baseUrl": "http://localhost:5216"
+      "baseUrl": "http://192.168.100.232:6420"
     }
   },
   "NLog": {

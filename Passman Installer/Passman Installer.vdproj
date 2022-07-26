@@ -85,6 +85,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -102,6 +110,16 @@
         {
             "LaunchCondition"
             {
+                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_94DA81398B6A402CAB184452254B41C1"
+                {
+                "Name" = "8:.NET Core"
+                "Message" = "8:[VSDNETCOREMSG]"
+                "AllowLaterVersions" = "11:FALSE"
+                "InstallUrl" = "8:https://dotnet.microsoft.com/download/dotnet-core/[NetCoreVerMajorDotMinor]"
+                "IsNETCore" = "11:TRUE"
+                "Architecture" = "2:0"
+                "Runtime" = "2:0"
+                }
             }
         }
         "File"
@@ -181,22 +199,22 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Passman Installer"
-        "ProductCode" = "8:{3477259F-5D0A-4245-890E-5C4BC115E7E0}"
-        "PackageCode" = "8:{615D9E7C-F918-4EFA-850A-2799A4776E19}"
+        "ProductName" = "8:Passman"
+        "ProductCode" = "8:{F520C8D8-2979-431A-BAFE-C5D754AFB573}"
+        "PackageCode" = "8:{4CBC0F6B-C493-43E7-A0AB-8DEF7058A859}"
         "UpgradeCode" = "8:{8C630783-8E1E-46C2-80E6-3571803BC427}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Admin"
+        "ProductVersion" = "8:1.0.1"
+        "Manufacturer" = "8:Hjkaru"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:Passman Installer"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Admin"
+        "ARPCONTACT" = "8:Hjkaru"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -732,7 +750,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0BF92678139040B18E4F37AF07535A2C"
             {
-            "SourcePath" = "8:..\\PasswordManager\\obj\\Release\\net6.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\PasswordManager\\obj\\Debug\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E4664B29043D4DDC888A690E97A96088"

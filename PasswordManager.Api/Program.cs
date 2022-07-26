@@ -4,8 +4,10 @@ using PasswordManager.Domain.Models;
 using PasswordManager.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddJsonFile("Config/appsettings.json", optional: true, reloadOnChange: true);
 // Add services to the container.
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

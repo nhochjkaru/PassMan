@@ -58,7 +58,7 @@ namespace PasswordManager.Authorization.Holders
         {
             try
             {
-                var fileInfo = new FileInfo(Constants.GoogleDriveFilePath);
+                var fileInfo = new FileInfo(Constants.ApiFilePath);
                 fileInfo.Delete();
             }
             catch (Exception ex)

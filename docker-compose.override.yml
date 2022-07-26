@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  passwordmanager.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "6420:80"
+    volumes:
+      - ./Passman/Config:/app/Config

@@ -13,7 +13,7 @@ namespace PasswordManager.Helpers
 
         public static string LocalAppDataDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
         //public static string RoamingAppDataDirectoryPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
-        public static string PasswordsFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, PasswordsFileName);
+        public static string PasswordsFilePath { get; set; } = Path.Combine(LocalAppDataDirectoryPath, PasswordsFileName);
         public static string CommonSettingsFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, CommonSettingsFileName);
         public static string GoogleDriveFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, GoogleDriveFileName);
         public static string ApiFilePath { get; } = Path.Combine(LocalAppDataDirectoryPath, ApiFileName);

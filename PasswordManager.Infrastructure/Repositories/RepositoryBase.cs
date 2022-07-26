@@ -264,6 +264,17 @@ namespace PasswordManager.Infrastructure.Repositories
             _dbContext.Entry(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
+        public async Task UpdateNoSaveAsync(T entity)
+        {
+            var checkLocal = _dbContext.Set<T>()
+                .Local
+                .FirstOrDefault(p => p.Id == entity.Id);
+            if (checkLocal != null)
+            {
+                _dbContext.Entry(checkLocal).State = EntityState.Detached;
+            }
+            _dbContext.Entry(entity).State = EntityState.Modified;
+        }
         public async Task UpdateRange(params T[] entities)
         {
             _dbSet.UpdateRange(entities);

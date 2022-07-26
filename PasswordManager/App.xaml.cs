@@ -8,6 +8,7 @@ using PasswordManager.Authorization.Brokers;
 using PasswordManager.Authorization.Holders;
 using PasswordManager.Authorization.Responses;
 using PasswordManager.Clouds.Services;
+using PasswordManager.Helpers;
 using PasswordManager.Hotkeys;
 using PasswordManager.RestApiHelper;
 using PasswordManager.Services;
@@ -15,6 +16,7 @@ using PasswordManager.Settings;
 using PasswordManager.ViewModels;
 using PasswordManager.Views;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,6 +29,7 @@ namespace PasswordManager
     public partial class App : Application
     {
         public static byte[] credSt { get; set; }
+        public static string userName { get; set; }
         public static string apitoken { get; set; }
         private readonly Mutex _mutex;
         private static IConfiguration _configuration;
@@ -101,8 +104,9 @@ namespace PasswordManager
                             App.apitoken = token.AccessToken;
                             try
                             {
-                                var task = Task.Run(async () => await _callApi.Get("api/v1.1/Authentication"));
-                                var a = task.Result;
+                                var task = Task.Run(async () => await _callApi.Get("api/v1.1/Authentication/ValidToken"));
+                                App.userName = task.Result;
+                                Constants.PasswordsFilePath= Path.Combine(Constants.LocalAppDataDirectoryPath, App.userName+Constants.PasswordsFileName);
                                 if (_callApi.IsSuccessStatusCode)
                                 {
                                     validtoken = true;
@@ -130,10 +134,9 @@ namespace PasswordManager
                         }
                         userloginWindow.Close();
                     }
-                    else
-                    {
-                        welcomeWindow.Close();
-                    }
+                    
+                    welcomeWindow.Close();
+                    
                     var loginWindow = Host.Services.GetService<LoginWindow>();
                     
                     bool? dialogResult = loginWindow.ShowDialog(); // Stop here
@@ -194,6 +197,7 @@ namespace PasswordManager
                 services.AddScoped<MainWindowViewModel>();
                 services.AddScoped<PasswordsViewModel>();
                 services.AddScoped<CloudSyncViewModel>();
+                services.AddScoped<TPCloudSyncViewModel>();
                 services.AddScoped<SettingsViewModel>();
                 services.AddScoped<CredentialsDialogViewModel>();
 

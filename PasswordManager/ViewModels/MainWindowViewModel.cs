@@ -53,12 +53,13 @@ namespace PasswordManager.ViewModels
         public MainWindowViewModel(
             PasswordsViewModel passwordsViewModel,
             SettingsViewModel settingsViewModel,
-            CloudSyncViewModel cloudsViewModel)
+            CloudSyncViewModel cloudsViewModel,
+            TPCloudSyncViewModel tPcloudsViewModel)
         {
             PasswordsVM = passwordsViewModel;
             CloudSyncVM = cloudsViewModel;
             SettingsVM = settingsViewModel;
-
+            TPCloudSyncVM = tPcloudsViewModel;
             PasswordsVM.CredentialSelected += PasswordsViewModel_CredentialSelected;
             CloudSyncVM.SyncCompleted += SettingsViewModel_SyncCompleted;
 

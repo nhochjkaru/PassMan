@@ -55,6 +55,7 @@ namespace PasswordManager.Application.Interface
         Task AddRangeNoSaveAsync(params T[] entities);
         Task AddRangeNoSaveAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default(CancellationToken));
         Task UpdateAsync(T entity);
+        Task UpdateNoSaveAsync(T entity);
         Task UpdateRange(params T[] entities);
         Task UpdateRange(IEnumerable<T> entities);
         Task DeleteAsync(T entity);

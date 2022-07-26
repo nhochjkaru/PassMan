@@ -2,12 +2,16 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using Newtonsoft.Json;
+using PasswordManager.Domain.Dto;
 using PasswordManager.Helpers;
 using PasswordManager.Hotkeys;
+using PasswordManager.RestApiHelper;
 using PasswordManager.Services;
 using PasswordManager.Settings;
 using PasswordManager.Views.MessageBox;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PasswordManager.ViewModels
@@ -32,8 +36,10 @@ namespace PasswordManager.ViewModels
         private readonly HotkeysService _hotkeysService;
         private readonly SyncService _syncService;
         private string _newPassword;
+        private string _newUPassword;
         private string _newPasswordHelperText;
         private AsyncRelayCommand _changePasswordCommand;
+        private AsyncRelayCommand _changeUPasswordCommand;
         private RelayCommand<System.Windows.Input.KeyEventArgs> _changeHelperPopupHotkeyCommand;
         private RelayCommand _clearShowPopupHotkeyCommand;
 
@@ -58,6 +64,16 @@ namespace PasswordManager.ViewModels
             }
         }
 
+        public string NewUPassword
+        {
+            get => _newUPassword;
+            set
+            {
+                SetProperty(ref _newUPassword, value);
+                ChangeUPasswordCommand.NotifyCanExecuteChanged();
+            }
+        }
+
         public string NewPasswordHelperText
         {
             get => _newPasswordHelperText;
@@ -78,18 +94,20 @@ namespace PasswordManager.ViewModels
         public event Action NewPasswordIsSet;
 
         public AsyncRelayCommand ChangePasswordCommand => _changePasswordCommand ??= new AsyncRelayCommand(ChangePasswordAsync, CanChangePassword);
+        public AsyncRelayCommand ChangeUPasswordCommand => _changeUPasswordCommand ??= new AsyncRelayCommand(ChangeUPasswordAsync, CanChangeUPassword);
         public RelayCommand<System.Windows.Input.KeyEventArgs> ChangeHelperPopupHotkeyCommand => _changeHelperPopupHotkeyCommand ??= new RelayCommand<System.Windows.Input.KeyEventArgs>(ChangeHelperPopupHotkey);
         public RelayCommand ClearShowPopupHotkeyCommand => _clearShowPopupHotkeyCommand ??= new RelayCommand(ClearShowPopupHotkey);
 
         private SettingsViewModel() { }
-
+        private readonly CallApi _callApi;
         public SettingsViewModel(
             ThemeService themeService,
             AppSettingsService appSettingsService,
             CredentialsCryptoService credentialsCryptoService,
             ILogger<SettingsViewModel> logger,
             HotkeysService hotkeysService,
-            SyncService syncService)
+            SyncService syncService,
+            CallApi callApi)
         {
             _themeService = themeService;
             _appSettingsService = appSettingsService;
@@ -100,6 +118,7 @@ namespace PasswordManager.ViewModels
             _themeMode = _appSettingsService.ThemeMode;
             _showPopupHotkey = _appSettingsService.ShowPopupHotkey;
             _syncService = syncService;
+            _callApi = callApi;
         }
 
         private async Task ChangePasswordAsync()
@@ -137,7 +156,57 @@ namespace PasswordManager.ViewModels
                     PackIconKind.Tick);
             }
         }
+        public string Hash(string password)
+        {
+            var bytes = new UTF8Encoding().GetBytes(password);
+            byte[] hashBytes;
+            using (var algorithm = new System.Security.Cryptography.SHA512Managed())
+            {
+                hashBytes = algorithm.ComputeHash(bytes);
+            }
+            return Convert.ToBase64String(hashBytes);
+        }
+        private async Task ChangeUPasswordAsync()
+        {
+            if (string.IsNullOrWhiteSpace(NewUPassword) || NewUPassword.Length < 8)
+            {
+                NewPasswordHelperText = "Minimum symbols count is 8";
+                return;
+            }
 
+            NewPasswordHelperText = string.Empty;
+            var dialogIdentifier = MvvmHelper.MainWindowDialogName;
+            var success = false;
+
+            try
+            {
+                var loginrequest = new dtoLoginRequest { userName = "", password = Hash(App.userName+NewUPassword), FirstName = "", LastName = "" };
+
+                string res = await _callApi.Post("api/v1.1/Authentication/changePass", loginrequest);
+                //string res = await api.Post("api/v1.1/Authentication/register", loginrequest);
+                var LoginRes = (dtoLoginResponse)JsonConvert.DeserializeObject(res, typeof(dtoLoginResponse));
+                if (LoginRes.resCode == "000")
+                {
+                    NewPasswordIsSet?.Invoke();
+                    success = true;
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null);
+            }
+
+            if (success)
+            {
+                await MaterialMessageBox.ShowAsync(
+                    "Success",
+                    "New User password applied",
+                    MaterialMessageBoxButtons.OK,
+                    dialogIdentifier,
+                    PackIconKind.Tick);
+            }
+        }
         private void ChangeHelperPopupHotkey(System.Windows.Input.KeyEventArgs args)
         {
             if (_hotkeysService.GetHotkeyForKeyPress(args, out Hotkey hotkey))
@@ -155,6 +224,10 @@ namespace PasswordManager.ViewModels
         private bool CanChangePassword()
         {
             return !string.IsNullOrWhiteSpace(NewPassword);
+        }
+        private bool CanChangeUPassword()
+        {
+            return true;
         }
     }
 }

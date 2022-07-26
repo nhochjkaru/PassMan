@@ -10,6 +10,7 @@ using PasswordManager.RestApiHelper;
 using PasswordManager.Services;
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -90,7 +91,16 @@ namespace PasswordManager.ViewModels
 
 
         }
-
+        public string Hash(string password)
+        {
+            var bytes = new UTF8Encoding().GetBytes(password);
+            byte[] hashBytes;
+            using (var algorithm = new System.Security.Cryptography.SHA512Managed())
+            {
+                hashBytes = algorithm.ComputeHash(bytes);
+            }
+            return Convert.ToBase64String(hashBytes);
+        }
         public async Task PushCredentialsAsync()
         {
             if (string.IsNullOrWhiteSpace(Password) || Password.Length < 8)
@@ -114,7 +124,7 @@ namespace PasswordManager.ViewModels
                 //_credentialsCryptoService.SetPassword(Password);
                 var loadingResult = await _credentialsCryptoService.LoadCredentialsAsync();
                 cancellationToken.ThrowIfCancellationRequested();
-                var loginrequest = new dtoLoginRequest { userName = UserName, password = Password, FirstName = "", LastName = "" };
+                var loginrequest = new dtoLoginRequest { userName = UserName, password = Hash(UserName+Password), FirstName = "", LastName = "" };
 
                 string res = await _callApi.Post("api/v1.1/Authentication/register", loginrequest);
                 //string res = await api.Post("api/v1.1/Authentication/register", loginrequest);
@@ -123,6 +133,8 @@ namespace PasswordManager.ViewModels
                 {
                     App.apitoken = LoginRes.token;
                     App.credSt = null;
+                    App.userName=LoginRes.userName;
+                    Constants.PasswordsFilePath = Path.Combine(Constants.LocalAppDataDirectoryPath, App.userName + Constants.PasswordsFileName);
                     ApiTokenResponse a = new ApiTokenResponse();
                     a.AccessToken = LoginRes.token;
                     a.Username = UserName;
@@ -130,6 +142,7 @@ namespace PasswordManager.ViewModels
                     Accept?.Invoke();
 
                     //TODO load LoadCredentials
+
                 }
                 else
                 {
@@ -173,7 +186,7 @@ namespace PasswordManager.ViewModels
                 cancellationToken.ThrowIfCancellationRequested();
 
                 //TODO call login API
-                var loginrequest = new dtoLoginRequest { userName = UserName, password = Password, FirstName = "", LastName = "" };
+                var loginrequest = new dtoLoginRequest { userName = UserName, password = Hash(UserName+Password), FirstName = "", LastName = "" };
                 string res = await _callApi.Post("api/v1.1/Authentication/login", loginrequest);
                 //string res = await api.Post("api/v1.1/Authentication/login", loginrequest);
                 var LoginRes = (dtoLoginResponse)JsonConvert.DeserializeObject(res, typeof(dtoLoginResponse));
@@ -181,7 +194,8 @@ namespace PasswordManager.ViewModels
                 {
                     App.apitoken = LoginRes.token;
                     App.credSt = null;
-
+                    App.userName = LoginRes.userName;
+                    Constants.PasswordsFilePath = Path.Combine(Constants.LocalAppDataDirectoryPath, App.userName + Constants.PasswordsFileName);
                     ApiTokenResponse a = new ApiTokenResponse();
                     a.AccessToken = LoginRes.token;
                     a.Username = UserName;

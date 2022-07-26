@@ -394,7 +394,7 @@ namespace PasswordManager.Language.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New password.
+        ///   Looks up a localized string similar to Local Passcode.
         /// </summary>
         public static string NewPassword {
             get {
@@ -615,6 +615,24 @@ namespace PasswordManager.Language.Properties {
         public static string System {
             get {
                 return ResourceManager.GetString("System", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change User Password.
+        /// </summary>
+        public static string UChangePassword {
+            get {
+                return ResourceManager.GetString("UChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New User Password.
+        /// </summary>
+        public static string UNewPassword {
+            get {
+                return ResourceManager.GetString("UNewPassword", resourceCulture);
             }
         }
         
