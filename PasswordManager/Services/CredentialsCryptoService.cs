@@ -20,7 +20,7 @@ namespace PasswordManager.Services
         private readonly object _credentialsLock = new();
         private readonly ILogger<CredentialsCryptoService> _logger;
         private readonly CryptoService _cryptoService;
-        private readonly string _pathToPasswordsFile = Constants.PasswordsFilePath;
+        private string _pathToPasswordsFile = Constants.PasswordsFilePath;
 
         private List<Credential> _credentials = new();
         public List<Credential> Credentials
@@ -80,6 +80,7 @@ namespace PasswordManager.Services
 
         public async Task<bool> LoadCredentialsAsync()
         {
+            _pathToPasswordsFile = Constants.PasswordsFilePath;
             return await Task.Run(() =>
             {
                 _logger.LogInformation("Loading credentials from file...");
@@ -222,6 +223,7 @@ namespace PasswordManager.Services
 
         public async Task SaveCredentials()
         {
+            _pathToPasswordsFile = Constants.PasswordsFilePath;
             await Task.Run(() =>
             {
                 // Lock access to file for multithreading environment

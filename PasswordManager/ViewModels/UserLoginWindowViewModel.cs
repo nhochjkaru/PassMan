@@ -177,13 +177,7 @@ namespace PasswordManager.ViewModels
             {
                 Loading = true;
 
-                _cancellationTokenSource?.Cancel();
-                _cancellationTokenSource = new();
-                var cancellationToken = _cancellationTokenSource.Token;
-
-                //_credentialsCryptoService.SetPassword(Password);
-                var loadingResult = await _credentialsCryptoService.LoadCredentialsAsync();
-                cancellationToken.ThrowIfCancellationRequested();
+                
 
                 //TODO call login API
                 var loginrequest = new dtoLoginRequest { userName = UserName, password = Hash(UserName+Password), FirstName = "", LastName = "" };
@@ -199,10 +193,18 @@ namespace PasswordManager.ViewModels
                     ApiTokenResponse a = new ApiTokenResponse();
                     a.AccessToken = LoginRes.token;
                     a.Username = UserName;
+                    
+
+                    _cancellationTokenSource?.Cancel();
+                    _cancellationTokenSource = new();
+                    var cancellationToken = _cancellationTokenSource.Token;
+
+                    //_credentialsCryptoService.SetPassword(Password);
+                    var loadingResult = await _credentialsCryptoService.LoadCredentialsAsync();
+                    cancellationToken.ThrowIfCancellationRequested();                    //TODO load LoadCredentials
+
                     await _tokenHolder.SetAndSaveToken(JsonConvert.SerializeObject(a, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }), cancellationToken);
                     Accept?.Invoke();
-
-                    //TODO load LoadCredentials
                 }
                 else
                 {
