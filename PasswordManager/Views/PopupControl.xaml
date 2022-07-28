@@ -28,6 +28,7 @@
                 <ResourceDictionary Source="pack://application:,,,/PasswordManager;component/Themes/SeparatorTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <vm:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
             <DataTemplate x:Key="CredentialPopupDataTemplate" DataType="{x:Type vm:CredentialViewModel}">
                 <TextBlock Text="{Binding NameFieldVM.Value}" />
             </DataTemplate>
@@ -46,6 +47,8 @@
                         Source="{Binding FavIcon, IsAsync=True}" />
                     <TextBlock
                         Grid.Column="1"
+                        FontWeight="{Binding selected,
+                        Converter={StaticResource BoolToFontWeightConverter}}"
                         Margin="8 0 0 0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -130,7 +133,8 @@
                         md:TextFieldAssist.HasLeadingIcon="True"
                         md:TextFieldAssist.LeadingIcon="Search"
                         md:TextFieldAssist.LeadingIconSize="16"
-                        Style="{StaticResource CredFilledTextBoxStyle}"
+                        Background="White"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                         WindowChrome.IsHitTestVisibleInChrome="True"/>
 

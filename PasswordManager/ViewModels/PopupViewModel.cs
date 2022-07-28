@@ -5,15 +5,33 @@ using PasswordManager.Helpers;
 using PasswordManager.Hotkeys;
 using PasswordManager.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace PasswordManager.ViewModels
 {
+    public class BoolToFontWeightConverter : DependencyObject, IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+                              object parameter, CultureInfo culture)
+        {
+            return ((bool)value) ? FontWeights.Bold : FontWeights.Normal;
+        }
+
+        public object ConvertBack(object value, Type targetType,
+                                  object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
     public class PopupViewModel : ObservableObject
     {
         #region Design time instance
@@ -61,7 +79,7 @@ namespace PasswordManager.ViewModels
         public ObservableCollection<CredentialViewModel>  tempCred {get;set;}
         public int check { get; set; }
         private PopupViewModel() { }
-
+        public int selectedindex { get; set; }
         public PopupViewModel(
             CredentialsCryptoService credentialsCryptoService,
             ILogger<PopupViewModel> logger,
@@ -75,6 +93,8 @@ namespace PasswordManager.ViewModels
             
             var creds = _credentialsCryptoService.Credentials.Select(cr => _credentialViewModelFactory.ProvideNew(cr)).ToList();
             DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
+            selectedindex = 0;
+            DisplayedCredentials[selectedindex].selected=true;
             tempCred = DisplayedCredentials;
             check = 0;
             _userActivityHook.KeyDown += _userActivityHook_KeyDown;
@@ -88,29 +108,87 @@ namespace PasswordManager.ViewModels
 
         private void _userActivityHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
+            List<CredentialViewModel> creds = null;
             bool isLetterOrDigit = char.IsLetterOrDigit((char)e.KeyCode);
             if(isLetterOrDigit)
             {
                 SearchText += e.KeyData.ToString().ToLower();
-                var creds = tempCred.Where(n => (n.LoginFieldVM.Value==null?false: n.LoginFieldVM.Value.Contains(SearchText)) || (n.NameFieldVM.Value == null ? false : n.NameFieldVM.Value.Contains(SearchText)) || (n.OtherFieldVM.Value == null ? false : n.OtherFieldVM.Value.Contains(SearchText)) || (n.SiteFieldVM.Value == null ? false : n.SiteFieldVM.Value.Contains(SearchText))).ToList();
+                creds = tempCred.Where(n => (n.LoginFieldVM.Value==null?false: n.LoginFieldVM.Value.Contains(SearchText)) || (n.NameFieldVM.Value == null ? false : n.NameFieldVM.Value.Contains(SearchText)) || (n.OtherFieldVM.Value == null ? false : n.OtherFieldVM.Value.Contains(SearchText)) || (n.SiteFieldVM.Value == null ? false : n.SiteFieldVM.Value.Contains(SearchText))).ToList();
                 DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
+                setSelectedIndex(creds);
             }
-            else if (e.KeyCode == System.Windows.Forms.Keys.Space)
+            //else if (e.KeyCode == System.Windows.Forms.Keys.Space)
+            //{
+            //    SearchText += " ";
+            //    creds = tempCred.Where(n => (n.LoginFieldVM.Value == null ? false : n.LoginFieldVM.Value.Contains(SearchText)) || (n.NameFieldVM.Value == null ? false : n.NameFieldVM.Value.Contains(SearchText)) || (n.OtherFieldVM.Value == null ? false : n.OtherFieldVM.Value.Contains(SearchText)) || (n.SiteFieldVM.Value == null ? false : n.SiteFieldVM.Value.Contains(SearchText))).ToList();
+            //    DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
+            //}
+            //else if(e.KeyCode == System.Windows.Forms.Keys.Back)
+            //{
+            //    SearchText = "";
+            //    DisplayedCredentials = new ObservableCollection<CredentialViewModel>(tempCred);
+            //}
+            else
             {
-                SearchText += " ";
-                var creds = tempCred.Where(n => (n.LoginFieldVM.Value == null ? false : n.LoginFieldVM.Value.Contains(SearchText)) || (n.NameFieldVM.Value == null ? false : n.NameFieldVM.Value.Contains(SearchText)) || (n.OtherFieldVM.Value == null ? false : n.OtherFieldVM.Value.Contains(SearchText)) || (n.SiteFieldVM.Value == null ? false : n.SiteFieldVM.Value.Contains(SearchText))).ToList();
-                DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
+                switch(e.KeyCode)
+                {
+                    case System.Windows.Forms.Keys.Space:
+                        SearchText += " ";
+                        creds = tempCred.Where(n => (n.LoginFieldVM.Value == null ? false : n.LoginFieldVM.Value.Contains(SearchText)) || (n.NameFieldVM.Value == null ? false : n.NameFieldVM.Value.Contains(SearchText)) || (n.OtherFieldVM.Value == null ? false : n.OtherFieldVM.Value.Contains(SearchText)) || (n.SiteFieldVM.Value == null ? false : n.SiteFieldVM.Value.Contains(SearchText))).ToList();
+                        DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
+                        setSelectedIndex(creds);
+                        break;
+                    case System.Windows.Forms.Keys.Back:
+                        SearchText = "";
+                        DisplayedCredentials = new ObservableCollection<CredentialViewModel>(tempCred);
+                        setSelectedIndex(creds);
+                        break;
+
+                    case System.Windows.Forms.Keys.Escape:
+                        _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                        Accept?.Invoke();
+                        break;
+                    case System.Windows.Forms.Keys.Down:
+                        selectedindex++;
+                        setSelectedIndex(creds);
+                        break;
+                    case System.Windows.Forms.Keys.Up:
+                        selectedindex--;
+                        setSelectedIndex(creds);
+                        break;
+                    case System.Windows.Forms.Keys.Right:
+                        SetAndClose(DisplayedCredentials[selectedindex].PasswordFieldVM);
+                        break;
+                    case System.Windows.Forms.Keys.Left:
+                        SetAndClose(DisplayedCredentials[selectedindex].LoginFieldVM);
+                        break;
+                    default:
+                        break;
+                }
             }
-            else if(e.KeyCode == System.Windows.Forms.Keys.Back)
-            {
-                SearchText = "";
-                var creds = tempCred;
-                DisplayedCredentials = new ObservableCollection<CredentialViewModel>(creds);
-            }
+
             
-
         }
-
+        private void setSelectedIndex(List<CredentialViewModel> creds)
+        {
+            _logger.LogInformation($"setSelectedIndex last Selected index = {selectedindex}");
+            var templist = creds!=null? creds.Select(c => { c.selected = false; return c; }).ToList() : DisplayedCredentials.Select(c => { c.selected = false; return c; }).ToList();
+            if (templist.Count > 0)
+            {
+                _logger.LogInformation($"setSelectedIndex new Selected templist.Count = {templist.Count}");
+                if (selectedindex > templist.Count-1)
+                {
+                    selectedindex = templist.Count-1;
+                }
+                if (selectedindex < 0)
+                {
+                    selectedindex = 0;
+                }
+                _logger.LogInformation($"setSelectedIndex new Selected index = {selectedindex}");
+                templist[selectedindex].selected = true;
+                DisplayedCredentials = new ObservableCollection<CredentialViewModel>(templist);
+            }
+        }
         private void SetAndClose(PassFieldViewModel passFieldViewModel)
         {
             try

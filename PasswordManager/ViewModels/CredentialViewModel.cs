@@ -36,8 +36,9 @@ namespace PasswordManager.ViewModels
         public PassFieldViewModel PasswordFieldVM { get; }
         public PassFieldViewModel OtherFieldVM { get; }
         public PassFieldViewModel SiteFieldVM { get; }
+        
         public ObservableCollection<PassFieldViewModel> AdditionalFields { get; }
-
+        public bool selected { get; set; }
         public DateTime LastModifiedTime
         {
             get => Model.LastModifiedTime;
