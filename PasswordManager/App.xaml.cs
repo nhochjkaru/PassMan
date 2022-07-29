@@ -66,7 +66,7 @@ namespace PasswordManager
             bool isStartup = false;
             if (e.Args.Length > 0)
             {
-                if(e.Args[0].ToString().ToLower() == "autostart")
+                if(e.Args[0].ToString().ToLower() == "-autostart")
                 {
                     isStartup = true;
                 }    

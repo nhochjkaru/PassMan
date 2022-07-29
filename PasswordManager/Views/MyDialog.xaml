@@ -28,7 +28,8 @@
             VerticalAlignment="Center"
             md:HintAssist.HelperText="{Binding HelperText}"
             md:HintAssist.Hint="{Binding HintText}"
-            MaxLength="32">
+            MaxLength="32"
+                    Style="{StaticResource MaterialDesignOutlinedPasswordBox}">
 
                 </PasswordBox>
 

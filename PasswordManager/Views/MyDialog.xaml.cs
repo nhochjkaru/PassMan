@@ -23,6 +23,7 @@ namespace PasswordManager.Views
         public MyDialog()
         {
             InitializeComponent();
+            ResponseTextBox.Focus();
         }
 
         public PasswordBox ResponseText
