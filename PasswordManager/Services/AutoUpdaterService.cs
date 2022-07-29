@@ -40,7 +40,10 @@ namespace PasswordManager.Services
             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             string AppName = "Passman";
             //if (chkStartUp.Checked)
-            rk.DeleteValue(AppName, false);
+            try
+            {
+                rk.DeleteValue(AppName, false);
+            }catch (Exception ex) { }
                 rk.SetValue(AppName, System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll",".exe"));
             //else
             //    rk.DeleteValue(AppName, false);
