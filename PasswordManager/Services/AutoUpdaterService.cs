@@ -1,5 +1,6 @@
 ﻿using AutoUpdaterDotNET;
 using Microsoft.Extensions.Options;
+using Microsoft.Win32;
 using PasswordManager.RestApiHelper;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,14 @@ namespace PasswordManager.Services
         }
         public void update()
         {
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey
+            ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            string AppName = "Passman";
+            //if (chkStartUp.Checked)
+            rk.DeleteValue(AppName, false);
+                rk.SetValue(AppName, System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll",".exe"));
+            //else
+            //    rk.DeleteValue(AppName, false);
             AutoUpdater.Start(_config.baseUrl + "/Updater/update.xml");
         }
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)

@@ -15,13 +15,13 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0BF92678139040B18E4F37AF07535A2C"
+        "MsmKey" = "8:_062B981F37414E24AB2126A6BC184DD7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_177D86298EB346E3A2148307EA56287A"
+        "MsmKey" = "8:_0BF92678139040B18E4F37AF07535A2C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -92,6 +92,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -124,7 +132,7 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_177D86298EB346E3A2148307EA56287A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_062B981F37414E24AB2126A6BC184DD7"
             {
             "SourcePath" = "8:..\\PasswordManager\\Resources\\icons8_password.ico"
             "TargetName" = "8:icons8_password.ico"
@@ -200,15 +208,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Passman"
-        "ProductCode" = "8:{F520C8D8-2979-431A-BAFE-C5D754AFB573}"
-        "PackageCode" = "8:{4CBC0F6B-C493-43E7-A0AB-8DEF7058A859}"
+        "ProductCode" = "8:{86718F60-9FCE-49F5-944A-AC73AE7331DE}"
+        "PackageCode" = "8:{1E2762A1-EAE6-48FD-94C7-82F9390ADA64}"
         "UpgradeCode" = "8:{8C630783-8E1E-46C2-80E6-3571803BC427}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.0.5"
         "Manufacturer" = "8:Hjkaru"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -332,7 +340,7 @@
             "Target" = "8:_0BF92678139040B18E4F37AF07535A2C"
             "Folder" = "8:_B50A567E97F04619A15FB37CBBD8AD3D"
             "WorkingFolder" = "8:_E4664B29043D4DDC888A690E97A96088"
-            "Icon" = "8:_177D86298EB346E3A2148307EA56287A"
+            "Icon" = "8:_062B981F37414E24AB2126A6BC184DD7"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_EF9C80C15D8C4B028E94952DAC5391E0"
@@ -346,7 +354,7 @@
             "Target" = "8:_0BF92678139040B18E4F37AF07535A2C"
             "Folder" = "8:_62F1897C6B6C48F5B466F9175A2ED9E3"
             "WorkingFolder" = "8:_E4664B29043D4DDC888A690E97A96088"
-            "Icon" = "8:_177D86298EB346E3A2148307EA56287A"
+            "Icon" = "8:_062B981F37414E24AB2126A6BC184DD7"
             "Feature" = "8:"
             }
         }
