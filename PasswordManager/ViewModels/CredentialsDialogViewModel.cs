@@ -4,9 +4,11 @@ using Microsoft.Toolkit.Mvvm.Input;
 using PasswordManager.Enums;
 using PasswordManager.Helpers;
 using PasswordManager.Models;
+using PasswordManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace PasswordManager.ViewModels
 {
@@ -22,7 +24,7 @@ namespace PasswordManager.ViewModels
             model.AdditionalFields = additionalFields;
 
             var credVm = new CredentialViewModel(model, null);
-            var vm = new CredentialsDialogViewModel(null);
+            var vm = new CredentialsDialogViewModel(null,null);
             vm._credentialViewModel = credVm;
             vm.Mode = CredentialsDialogMode.View;
             return vm;
@@ -30,7 +32,7 @@ namespace PasswordManager.ViewModels
         #endregion
 
         private readonly ILogger<CredentialsDialogViewModel> _logger;
-
+        private readonly PasswordGenerater _passwordGenerater;
         public event Action<CredentialViewModel, CredentialsDialogMode> Accept;
         public event Action<CredentialViewModel> Delete;
         public event Action Cancel;
@@ -41,6 +43,7 @@ namespace PasswordManager.ViewModels
         private RelayCommand _deleteCommand;
         private RelayCommand _openInBrowserCommand;
         private RelayCommand<string> _copyToClipboardCommand;
+        private RelayCommand _generatePasswordCommand;
         private CredentialViewModel _credentialViewModel;
         private CredentialsDialogMode _mode = CredentialsDialogMode.View;
         private bool _isPasswordVisible;
@@ -51,6 +54,7 @@ namespace PasswordManager.ViewModels
         public RelayCommand EditCommand => _editCommand ??= new RelayCommand(EditExecute);
         public RelayCommand DeleteCommand => _deleteCommand ??= new RelayCommand(DeleteExecute);
         public RelayCommand<string> CopyToClipboardCommand => _copyToClipboardCommand ??= new RelayCommand<string>(CopyToClipboard);
+        public RelayCommand GeneratePasswordCommand => _generatePasswordCommand ??= new RelayCommand(GeneratePassword);
         public RelayCommand OpenInBrowserCommand => _openInBrowserCommand ??= new RelayCommand(OpenInBrowser);
 
         public CredentialViewModel CredentialViewModel
@@ -101,9 +105,11 @@ namespace PasswordManager.ViewModels
             set => SetProperty(ref _isNameTextBoxFocused, value);
         }
 
-        public CredentialsDialogViewModel(ILogger<CredentialsDialogViewModel> logger)
+        public CredentialsDialogViewModel(ILogger<CredentialsDialogViewModel> logger,
+            PasswordGenerater passwordGenerater)
         {
             _logger = logger;
+            _passwordGenerater = passwordGenerater;
         }
 
         private void OkExecute()
@@ -153,7 +159,18 @@ namespace PasswordManager.ViewModels
                 _logger.LogError(ex, string.Empty);
             }
         }
-
+        private void GeneratePassword()
+        {
+            try
+            {
+                CredentialViewModel.PasswordFieldVM.Value = _passwordGenerater.GenerateRandomStrongPassword(16);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, string.Empty);
+            }
+        }
+       
         private void OpenInBrowser()
         {
             var uri = CredentialViewModel?.SiteFieldVM?.Value;

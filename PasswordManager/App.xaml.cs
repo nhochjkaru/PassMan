@@ -30,6 +30,7 @@ namespace PasswordManager
     {
         public static byte[] credSt { get; set; }
         public static string userName { get; set; }
+        public static string searchtext { get; set; } = "";
         public static string apitoken { get; set; }
         private readonly Mutex _mutex;
         private static IConfiguration _configuration;
@@ -62,7 +63,14 @@ namespace PasswordManager
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             InitializeComponent();
-
+            bool isStartup = false;
+            if (e.Args.Length > 0)
+            {
+                if(e.Args[0].ToString().ToLower() == "autostart")
+                {
+                    isStartup = true;
+                }    
+            }
             // Override culture
             //PasswordManager.Language.Properties.Resources.Culture = new System.Globalization.CultureInfo("en-US");
 
@@ -70,7 +78,7 @@ namespace PasswordManager
             {
                 // Welcome window
                 var welcomeWindow = new WelcomeWindow();
-                welcomeWindow.Show();
+                if (!isStartup) { welcomeWindow.Show(); };
 
                 _configuration = new ConfigurationBuilder()
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -119,10 +127,15 @@ namespace PasswordManager
                             }
                             catch (Exception ex)
                             {
-
+                                System.Diagnostics.Process.Start(System.Windows.Application.ResourceAssembly.Location);
+                                System.Windows.Application.Current.Shutdown();
                             }
                         }
                     }catch (Exception ex) { validtoken = false; }
+                    if(!validtoken && isStartup)
+                    {
+
+                    }    
                 }// Login
                 using (var loginScope = Host.Services.CreateScope())
                 {
@@ -139,8 +152,11 @@ namespace PasswordManager
                         }
                         userloginWindow.Close();
                     }
+                    if(welcomeWindow.IsVisible)
+                    {
+                        welcomeWindow.Close();
+                    }    
                     
-                    welcomeWindow.Close();
                     
                     var loginWindow = Host.Services.GetService<LoginWindow>();
                     
@@ -193,6 +209,7 @@ namespace PasswordManager
 
                 //updater
                 
+                services.AddSingleton<PasswordGenerater>();
                 services.AddSingleton<AutoUpdaterService>();
                 //Key detect
 
@@ -213,7 +230,7 @@ namespace PasswordManager
                 services.AddScoped<CredentialsDialogViewModel>();
 
                 services.AddTransient<PopupControl>();
-                services.AddTransient<PopupViewModel>();
+                services.AddSingleton<PopupViewModel>();
 
                 // Main services
                 services.AddSingleton<CredentialsCryptoService>();

@@ -268,6 +268,15 @@ namespace PasswordManager.Language.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate Password.
+        /// </summary>
+        public static string GenPassword {
+            get {
+                return ResourceManager.GetString("GenPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hotkeys.
         /// </summary>
         public static string Hotkeys {

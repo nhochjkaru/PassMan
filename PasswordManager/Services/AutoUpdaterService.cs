@@ -44,7 +44,8 @@ namespace PasswordManager.Services
             {
                 rk.DeleteValue(AppName, false);
             }catch (Exception ex) { }
-                rk.SetValue(AppName, System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll",".exe"));
+            string filepath = "\""+ System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe")+"\" -autostart";
+                rk.SetValue(AppName, filepath);
             //else
             //    rk.DeleteValue(AppName, false);
             AutoUpdater.Start(_config.baseUrl + "/Updater/update.xml");

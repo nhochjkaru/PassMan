@@ -62,7 +62,10 @@ namespace PasswordManager.ViewModels
         public string SearchText
         {
             get => _searchText;
-            set => SetProperty(ref _searchText, value);
+            set { 
+                SetProperty(ref _searchText, value);
+                App.searchtext= value;
+            }
         }
         private CredentialViewModel _selectedCredentialVM;
         public CredentialViewModel SelectedCredentialVM
@@ -97,12 +100,22 @@ namespace PasswordManager.ViewModels
             DisplayedCredentials[selectedindex].selected=true;
             tempCred = DisplayedCredentials;
             check = 0;
-            _userActivityHook.KeyDown += _userActivityHook_KeyDown;
+            
         }
-
+        public void addKeyEvent(bool add)
+        {
+            if(add)
+            {
+                _userActivityHook.KeyDown += _userActivityHook_KeyDown;
+            }
+            else
+            {
+                _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+            }
+        }
         private void Close()
         {
-            _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+            //_userActivityHook.KeyDown -= _userActivityHook_KeyDown;
             Accept?.Invoke();
         }
 
@@ -145,7 +158,7 @@ namespace PasswordManager.ViewModels
                         break;
 
                     case System.Windows.Forms.Keys.Escape:
-                        _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                       // _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                         Accept?.Invoke();
                         break;
                     case System.Windows.Forms.Keys.Down:
@@ -246,7 +259,7 @@ namespace PasswordManager.ViewModels
                     });
                     //t.RunSynchronously();
                 }
-                _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                //_userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                 Accept?.Invoke();
             }
             catch (Exception ex)

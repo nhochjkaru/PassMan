@@ -330,4 +330,7 @@
   <data name="UNewPassword" xml:space="preserve">
     <value>New User Password</value>
   </data>
+  <data name="GenPassword" xml:space="preserve">
+    <value>Generate Password</value>
+  </data>
 </root>

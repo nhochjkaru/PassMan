@@ -18,6 +18,7 @@
     Focusable="False"
     MouseDown="Popup_MouseDown"
     Opened="Popup_Opened"
+    Closed="Popup_Closed"
     Placement="AbsolutePoint"
     PopupAnimation="Fade"
     StaysOpen="True"

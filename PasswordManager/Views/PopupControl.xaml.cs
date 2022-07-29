@@ -30,8 +30,12 @@ namespace PasswordManager.Views
         private void Popup_Opened(object sender, System.EventArgs e)
         {
             Handle = ((HwndSource)PresentationSource.FromVisual(Child)).Handle;
+            ViewModel.addKeyEvent(true);
         }
-
+        private void Popup_Closed(object sender, EventArgs e)
+        {
+            ViewModel.addKeyEvent(false);
+        }
         private void Popup_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ChangedButton == System.Windows.Input.MouseButton.Left)
@@ -43,5 +47,7 @@ namespace PasswordManager.Views
             HorizontalOffset += e.HorizontalChange;
             VerticalOffset += e.VerticalChange;
         }
+
+       
     }
 }
