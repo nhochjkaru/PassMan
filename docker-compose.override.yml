@@ -8,3 +8,4 @@ services:
       - "6420:80"
     volumes:
       - ./Passman/Config:/app/Config
+      - ./Passman/Updater:/app/Updater

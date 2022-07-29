@@ -58,7 +58,7 @@ namespace PasswordManager
         {
             _logger?.Error(e.ExceptionObject as Exception, "Domain unhandled exception");
         }
-
+      
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             InitializeComponent();
@@ -85,6 +85,11 @@ namespace PasswordManager
                 Host = CreateHostBuilder().Build();
                 _logger.Info("Log session started!");
 
+
+                //Autoupdate
+                
+               var updaterService = Host.Services.GetService<AutoUpdaterService>();
+                updaterService.update();
                 // Resolve theme
                 var themeService = Host.Services.GetService<ThemeService>();
                 themeService.Init();
@@ -186,8 +191,11 @@ namespace PasswordManager
                 services.AddSingleton<CloudServiceProvider>();
                 services.AddSingleton<RestApiTokenHolder>();
 
-                //Key detect
+                //updater
                 
+                services.AddSingleton<AutoUpdaterService>();
+                //Key detect
+
                 services.AddSingleton<UserActivityHook>();
                 // Windows
                 services.AddScoped<LoginWindow>();

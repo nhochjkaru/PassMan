@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using PasswordManager.Api.Utilities;
 using PasswordManager.Application;
 using PasswordManager.Domain.Models;
@@ -34,7 +35,12 @@ if (app.Environment.IsDevelopment())
 //app.MapControllers();
 
 app.UseRouting();
-
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Updater")),
+    RequestPath = new PathString("/Updater")
+});
 // global cors policy
 app.UseCors(x => x
     .AllowAnyOrigin()

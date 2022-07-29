@@ -20,6 +20,18 @@ namespace PasswordManager.Api.Controllers
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
+
+        [HttpGet("download")]
+        public IActionResult GetBlobDownload([FromQuery] string link)
+        {
+            var net = new System.Net.WebClient();
+            var data = net.DownloadData(link);
+            var content = new System.IO.MemoryStream(data);
+            var contentType = "APPLICATION/octet-stream";
+            var fileName = "something.bin";
+            return File(content, contentType, fileName);
+        }
+
         [Route("login")]
         [HttpPost]
         [ProducesResponseType(typeof(dtoLoginResponse), (int)HttpStatusCode.OK)]
