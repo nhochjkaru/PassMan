@@ -178,6 +178,9 @@ namespace PasswordManager.ViewModels
                     case System.Windows.Forms.Keys.Left:
                         SetAndClose(DisplayedCredentials[selectedindex].LoginFieldVM);
                         break;
+                    case System.Windows.Forms.Keys.Insert:
+                        SetAllAndClose(DisplayedCredentials[selectedindex].LoginFieldVM, DisplayedCredentials[selectedindex].PasswordFieldVM);
+                        break;
                     default:
                         break;
                 }
@@ -213,6 +216,7 @@ namespace PasswordManager.ViewModels
                 var inputData = passFieldViewModel.Value;
                 if (!string.IsNullOrWhiteSpace(inputData))
                 {
+                    _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                     string tempclipboard= WindowsClipboard.GetText();
                     WindowsClipboard.SetText(inputData);
 
@@ -270,6 +274,101 @@ namespace PasswordManager.ViewModels
             {
                 _logger.LogError(ex, null);
             }
+        }
+
+        private void SetAllAndClose(PassFieldViewModel loginFieldViewMode, PassFieldViewModel passFieldViewModel)
+        {
+            try
+            {
+                var inputData = passFieldViewModel.Value;
+                if (!string.IsNullOrWhiteSpace(inputData))
+                {
+                    _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                    string tempclipboard = WindowsClipboard.GetText();
+
+                    setFieldValue(loginFieldViewMode.Value);
+
+                    INPUT[] inputsa = new INPUT[2];
+
+                    inputsa[0].type = WindowsKeyboard.INPUT_KEYBOARD;
+                    inputsa[0].U.ki.wVk = WindowsKeyboard.VK_TAB;
+
+                    inputsa[1].type = WindowsKeyboard.INPUT_KEYBOARD;
+                    inputsa[1].U.ki.wVk = WindowsKeyboard.VK_TAB;
+                    inputsa[1].U.ki.dwFlags = WindowsKeyboard.KEYEVENTF_KEYUP;
+
+                    
+
+                    var uSenta = WindowsKeyboard.SendInput((uint)inputsa.Length, inputsa, INPUT.Size);
+
+                    var t2 = Task.Run(async () =>
+                    {
+                        await Task.Delay(1000);
+                        setFieldValue(passFieldViewModel.Value);
+                        var t = Task.Run(async () =>
+                        {
+                            await Task.Delay(1000);
+                            WindowsClipboard.SetText(tempclipboard);
+                        });
+                    });
+                    
+
+
+                    
+                    //t.RunSynchronously();
+                }
+                //_userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                Accept?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null);
+            }
+        }
+
+        private void setFieldValue(string inputData)
+        {
+            WindowsClipboard.SetText(inputData);
+            _logger.LogInformation("Set Login data to clipboard: "+ inputData);
+            INPUT[] inputsa = new INPUT[4];
+
+            inputsa[0].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputsa[0].U.ki.wVk = WindowsKeyboard.VK_CONTROL;
+
+            inputsa[1].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputsa[1].U.ki.wVk = WindowsKeyboard.VK_A;
+
+            inputsa[2].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputsa[2].U.ki.wVk = WindowsKeyboard.VK_A;
+            inputsa[2].U.ki.dwFlags = WindowsKeyboard.KEYEVENTF_KEYUP;
+
+            inputsa[3].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputsa[3].U.ki.wVk = WindowsKeyboard.VK_CONTROL;
+            inputsa[3].U.ki.dwFlags = WindowsKeyboard.KEYEVENTF_KEYUP;
+
+            // Send input simulate Ctrl + V
+            var uSenta = WindowsKeyboard.SendInput((uint)inputsa.Length, inputsa, INPUT.Size);
+
+
+            INPUT[] inputs = new INPUT[4];
+
+            inputs[0].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputs[0].U.ki.wVk = WindowsKeyboard.VK_CONTROL;
+
+            inputs[1].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputs[1].U.ki.wVk = WindowsKeyboard.VK_V;
+
+            inputs[2].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputs[2].U.ki.wVk = WindowsKeyboard.VK_V;
+            inputs[2].U.ki.dwFlags = WindowsKeyboard.KEYEVENTF_KEYUP;
+
+            inputs[3].type = WindowsKeyboard.INPUT_KEYBOARD;
+            inputs[3].U.ki.wVk = WindowsKeyboard.VK_CONTROL;
+            inputs[3].U.ki.dwFlags = WindowsKeyboard.KEYEVENTF_KEYUP;
+
+            // Send input simulate Ctrl + V
+            var uSent = WindowsKeyboard.SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            _logger.LogInformation("Sent paste: ");
         }
     }
 }
