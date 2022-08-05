@@ -110,7 +110,10 @@ namespace PasswordManager.ViewModels
             }
             else
             {
-                _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                try
+                {
+                    _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                }catch(Exception ex) { }
             }
         }
         private void Close()
@@ -206,6 +209,7 @@ namespace PasswordManager.ViewModels
         {
             try
             {
+                _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                 var inputData = passFieldViewModel.Value;
                 if (!string.IsNullOrWhiteSpace(inputData))
                 {
@@ -259,7 +263,7 @@ namespace PasswordManager.ViewModels
                     });
                     //t.RunSynchronously();
                 }
-                //_userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                
                 Accept?.Invoke();
             }
             catch (Exception ex)
