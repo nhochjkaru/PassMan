@@ -216,7 +216,6 @@ namespace PasswordManager.ViewModels
                 var inputData = passFieldViewModel.Value;
                 if (!string.IsNullOrWhiteSpace(inputData))
                 {
-                    _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                     string tempclipboard= WindowsClipboard.GetText();
                     WindowsClipboard.SetText(inputData);
 
@@ -280,10 +279,11 @@ namespace PasswordManager.ViewModels
         {
             try
             {
+                _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
                 var inputData = passFieldViewModel.Value;
                 if (!string.IsNullOrWhiteSpace(inputData))
                 {
-                    _userActivityHook.KeyDown -= _userActivityHook_KeyDown;
+                    
                     string tempclipboard = WindowsClipboard.GetText();
 
                     setFieldValue(loginFieldViewMode.Value);
