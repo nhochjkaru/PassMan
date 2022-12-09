@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AsyncKeyedLock;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -241,6 +242,9 @@ namespace PasswordManager
                 services.AddSingleton<HotkeysService>();
                 services.AddSingleton<ImageService>();
                 services.AddSingleton<CredentialViewModelFactory>();
+
+                // Locking
+                services.AddSingleton<AsyncKeyedLocker<string>>();
             });
 
         private void Application_Exit(object sender, ExitEventArgs e)
