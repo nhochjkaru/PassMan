@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AsyncKeyedLock;
+using Microsoft.Extensions.Logging;
 using PasswordManager.Helpers.Threading;
 using System;
 using System.Collections.Concurrent;
@@ -13,13 +14,16 @@ namespace PasswordManager.Services
         private readonly ConcurrentDictionary<string, ImageSource> _imagesDict = new();
         private readonly ILogger<FavIconService> _logger;
         private readonly ImageService _imageService;
+        private readonly AsyncKeyedLocker<string> _asyncKeyedLock;
 
         public FavIconService(
             ILogger<FavIconService> logger,
-            ImageService imageService)
+            ImageService imageService,
+            AsyncKeyedLocker<string> asyncKeyedLock)
         {
             _imageService = imageService;
             _logger = logger;
+            _asyncKeyedLock = asyncKeyedLock;
         }
 
         public ImageSource GetImage(string imageUrlString)
@@ -32,7 +36,7 @@ namespace PasswordManager.Services
                 var host = imageUrl.Host;
                 ImageSource bitmapImage;
 
-                using var locker = AsyncDuplicateLock.Lock(host);
+                using var locker = _asyncKeyedLock.Lock(host);
                 if (_imagesDict.TryGetValue(host, out ImageSource image))
                 {
                     bitmapImage = image;
