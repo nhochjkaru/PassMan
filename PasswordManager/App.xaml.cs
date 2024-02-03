@@ -244,7 +244,11 @@ namespace PasswordManager
                 services.AddSingleton<CredentialViewModelFactory>();
 
                 // Locking
-                services.AddSingleton<AsyncKeyedLocker<string>>();
+                services.AddSingleton(new AsyncKeyedLocker<string>(o =>
+                {
+                    o.PoolSize = 20;
+                    o.PoolInitialFill = 1;
+                });
             });
 
         private void Application_Exit(object sender, ExitEventArgs e)
